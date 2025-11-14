@@ -148,7 +148,7 @@ function sendCommand(command) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({command: command}),
+        body: JSON.stringify({Command: command}),
     })
     .then(response => response.json())
     .then(data => {

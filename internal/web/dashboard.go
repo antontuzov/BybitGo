@@ -217,6 +217,18 @@ func (d *Dashboard) portfolioHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add overrideHandler to handle manual override commands
 func (d *Dashboard) overrideHandler(w http.ResponseWriter, r *http.Request) {
+	// Set CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+
+	// Handle preflight requests
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -225,7 +237,7 @@ func (d *Dashboard) overrideHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the command from the request body
 	var command OverrideCommand
 	if err := json.NewDecoder(r.Body).Decode(&command); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		http.Error(w, "Invalid JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -236,7 +248,6 @@ func (d *Dashboard) overrideHandler(w http.ResponseWriter, r *http.Request) {
 			"status":  "success",
 			"message": fmt.Sprintf("Command '%s' sent successfully", command.Command),
 		}
-		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 	default:
 		http.Error(w, "Command queue full", http.StatusServiceUnavailable)
