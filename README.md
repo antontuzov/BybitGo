@@ -91,6 +91,43 @@ Start the trading bot:
 
 Access the web dashboard at http://localhost:8080
 
+## Automated Trading
+
+The bot is configured to automatically trade every 5 minutes as specified by the `REBALANCE_MINUTES=5` setting in the `.env` file. The bot will:
+
+1. Analyze market conditions for the top 6 cryptocurrencies
+2. Select optimal strategies for each coin
+3. Execute trades based on strategy signals
+4. Rebalance the portfolio based on performance
+5. Monitor risk metrics and adjust positions accordingly
+
+To run the bot in the background:
+```bash
+./run-bot.sh
+```
+
+## Web Dashboard Deployment
+
+### Vercel Deployment
+
+The web dashboard can be deployed to Vercel for online access:
+
+1. The static files are located in the `web/static/` directory
+2. Vercel configuration is in `vercel.json`
+3. Push this repository to GitHub
+4. Connect your GitHub repository to Vercel
+5. Vercel will automatically deploy the dashboard
+
+### Local Development
+
+For local development of the web interface:
+
+1. Start the trading bot backend (runs on port 8080 by default)
+2. Open `web/static/index.html` in a browser
+3. The frontend will automatically connect to the backend API
+
+Note: For local development, you may need to configure CORS settings in the backend if serving the frontend from a different port.
+
 ## API Endpoints
 
 - `/api/metrics`: Performance metrics

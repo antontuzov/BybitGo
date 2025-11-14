@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bybit Trading Bot Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bybit Trading Bot Dashboard</h1>
+            <p>Real-time monitoring of your automated trading strategies</p>
+        </header>
+
+        <!-- Manual Controls Section -->
+        <div class="card controls">
+            <h2>Manual Controls</h2>
+            <button class="control-btn" onclick="sendCommand('start')">Start Trading</button>
+            <button class="control-btn stop" onclick="sendCommand('stop')">Stop Trading</button>
+            <button class="control-btn" onclick="sendCommand('rebalance')">Rebalance Portfolio</button>
+            <button class="control-btn emergency" onclick="sendCommand('emergency_stop')">Emergency Stop</button>
+            
+            <div class="override-log" id="override-log">
+                <p>Manual override commands will appear here...</p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('live')">Live Trading</div>
+            <div class="tab" onclick="switchTab('backtest')">Backtesting</div>
+        </div>
+
+        <!-- Live Trading Tab -->
+        <div id="live-tab" class="tab-content active">
+            <div class="grid">
+                <div class="card">
+                    <h2>Performance Metrics</h2>
+                    <div id="performance-metrics">
+                        <div class="metric">
+                            <span class="metric-label">Total Trades:</span>
+                            <span class="metric-value" id="total-trades">0</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Win Rate:</span>
+                            <span class="metric-value" id="win-rate">0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Total PnL:</span>
+                            <span class="metric-value positive" id="total-pnl">$0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Average PnL:</span>
+                            <span class="metric-value" id="avg-pnl">$0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Sharpe Ratio:</span>
+                            <span class="metric-value" id="sharpe-ratio">0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Risk Metrics</h2>
+                    <div id="risk-metrics">
+                        <div class="metric">
+                            <span class="metric-label">Total Exposure:</span>
+                            <span class="metric-value" id="total-exposure">$0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Portfolio Drawdown:</span>
+                            <span class="metric-value negative" id="portfolio-drawdown">0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Volatility:</span>
+                            <span class="metric-value" id="volatility">0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Correlation Risk:</span>
+                            <span class="metric-value" id="correlation-risk">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Portfolio Allocation</h2>
+                    <div id="portfolio-allocation">
+                        <!-- Portfolio allocation will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Portfolio Details</h2>
+                    <div id="portfolio-details">
+                        <div class="metric">
+                            <span class="metric-label">Total Capital:</span>
+                            <span class="metric-value" id="total-capital">$0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Active Symbols:</span>
+                            <span class="metric-value" id="active-symbols">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Trades</h2>
+                <table id="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Symbol</th>
+                            <th>Action</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Strategy</th>
+                            <th>Confidence</th>
+                            <th>PnL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trades-body">
+                        <!-- Trades will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Market Conditions</h2>
+                <div id="market-conditions">
+                    <!-- Market conditions will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Backtesting Tab -->
+        <div id="backtest-tab" class="tab-content">
+            <div class="card">
+                <h2>Backtest Configuration</h2>
+                <div>
+                    <label>Strategy: 
+                        <select id="backtest-strategy">
+                            <option value="market_making">Market Making</option>
+                            <option value="momentum">Momentum</option>
+                            <option value="mean_reversion">Mean Reversion</option>
+                            <option value="volatility_breakout">Volatility Breakout</option>
+                        </select>
+                    </label>
+                    <label>Initial Capital: $<input type="number" id="initial-capital" value="10000" min="1000"></label>
+                    <label>Start Date: <input type="date" id="start-date" value="2023-01-01"></label>
+                    <label>End Date: <input type="date" id="end-date" value="2023-12-31"></label>
+                    <button class="control-btn" onclick="runBacktest()">Run Backtest</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Backtest Results</h2>
+                <div id="backtest-results">
+                    <p>Run a backtest to see results...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Equity Curve</h2>
+                <div class="chart-container">
+                    <canvas id="equity-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Trade History</h2>
+                <table id="backtest-trades-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Symbol</th>
+                            <th>Action</th>
+                            <th>Quantity</th>
+                            <th>Entry Price</th>
+                            <th>Exit Price</th>
+                            <th>PnL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="backtest-trades-body">
+                        <!-- Backtest trades will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>Bybit Trading Bot Dashboard | Last Updated: <span id="last-updated"></span></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
