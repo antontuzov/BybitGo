@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/forbest/bybitgo/internal/backtest"
 	"github.com/forbest/bybitgo/internal/market"
@@ -47,7 +47,7 @@ func NewDashboard(portfolioManager *portfolio.PortfolioManager, riskManager *ris
 func (d *Dashboard) Start(port string) error {
 	// Serve static files
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static/"))))
-	
+
 	// Register API handlers
 	http.HandleFunc("/api/metrics", d.metricsHandler)
 	http.HandleFunc("/api/trades", d.tradesHandler)
@@ -57,16 +57,16 @@ func (d *Dashboard) Start(port string) error {
 	http.HandleFunc("/api/override", d.overrideHandler)
 	http.HandleFunc("/api/backtest", d.backtestHandler)
 	http.HandleFunc("/api/portfolio", d.portfolioHandler)
-	
+
 	// Serve the main dashboard page
 	http.HandleFunc("/", d.dashboardHandler)
-	
+
 	// Create server
 	d.Server = &http.Server{
 		Addr:    ":" + port,
 		Handler: nil,
 	}
-	
+
 	fmt.Printf("Starting dashboard server on port %s\n", port)
 	return d.Server.ListenAndServe()
 }
@@ -86,13 +86,13 @@ func (d *Dashboard) dashboardHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	
+
 	// If requesting static files, let the file server handle it
 	if strings.HasPrefix(r.URL.Path, "/static/") {
 		http.StripPrefix("/static/", http.FileServer(http.Dir("web/static/"))).ServeHTTP(w, r)
 		return
 	}
-	
+
 	// Serve the main index.html file
 	http.ServeFile(w, r, "web/static/index.html")
 }
