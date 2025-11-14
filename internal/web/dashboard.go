@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/forbest/bybitgo/internal/backtest"
@@ -82,14 +81,8 @@ func (d *Dashboard) Stop() error {
 // dashboardHandler serves the main dashboard page
 func (d *Dashboard) dashboardHandler(w http.ResponseWriter, r *http.Request) {
 	// Only serve the dashboard for the root path
-	if r.URL.Path != "/" && !strings.HasPrefix(r.URL.Path, "/static/") {
+	if r.URL.Path != "/" {
 		http.NotFound(w, r)
-		return
-	}
-
-	// If requesting static files, let the file server handle it
-	if strings.HasPrefix(r.URL.Path, "/static/") {
-		http.StripPrefix("/static/", http.FileServer(http.Dir("web/static/"))).ServeHTTP(w, r)
 		return
 	}
 
